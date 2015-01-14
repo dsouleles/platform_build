@@ -5,6 +5,7 @@
 LOCAL_PATH := $(BUILD_SYSTEM)
 
 # Pick a reasonable string to use to identify files.
+ifneq ($(DEANDROID_PRODUCT),)
 ifneq "" "$(filter eng.%,$(BUILD_NUMBER))"
   # BUILD_NUMBER has a timestamp in it, which means that
   # it will change every time.  Pick a stable value.
@@ -12,6 +13,10 @@ ifneq "" "$(filter eng.%,$(BUILD_NUMBER))"
 else
   FILE_NAME_TAG := $(BUILD_NUMBER)
 endif
+else
+  FILE_NAME_TAG := eng.$(USER)
+endif
+
 
 # -----------------------------------------------------------------
 # Define rules to copy PRODUCT_COPY_FILES defined by the product.
@@ -1450,7 +1455,7 @@ ifneq ($(recovery_fstab),)
 # -----------------------------------------------------------------
 # OTA update package
 
-name := DeanDroid_$(TARGET_PRODUCT)
+name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
   name := $(name)_debug
 endif

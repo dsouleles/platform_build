@@ -486,8 +486,12 @@ def WriteFullOTAPackage(input_zip, output_zip):
       metadata=metadata,
       info_dict=OPTIONS.info_dict)
 
+
   has_recovery_patch = HasRecoveryPatch(input_zip)
   block_based = OPTIONS.block_based and has_recovery_patch
+
+# DEAN -  Force block_based until I fix recovery overwrite logic
+  block_based = True
 
   if not OPTIONS.omit_prereq:
     ts = GetBuildProp("ro.build.date.utc", OPTIONS.info_dict)
@@ -607,6 +611,13 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
+
+  if block_based:
+    script.Print("Flashing SuperSU...")
+    common.ZipWriteStr(output_zip, "supersu/supersu.zip",
+                   ""+input_zip.read("SYSTEM/addon.d/UPDATE-SuperSU.zip"))
+    script.Mount("/system")
+    script.FlashSuperSU()
 
   script.ShowProgress(0.05, 5)
   script.WriteRawImage("/boot", "boot.img")

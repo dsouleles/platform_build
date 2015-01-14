@@ -60,6 +60,14 @@ function check_product()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
+
+    if (echo -n $1 | grep -q -e "^deandroid_") ; then
+        DEANDROID_PRODUCT=$(echo -n $1 | sed -e 's/^deandroid_//g')
+    else
+        DEANDROID_PRODUCT=
+    fi
+    export DEANDROID_PRODUCT
+
         TARGET_PRODUCT=$1 \
         TARGET_BUILD_VARIANT= \
         TARGET_BUILD_TYPE= \
